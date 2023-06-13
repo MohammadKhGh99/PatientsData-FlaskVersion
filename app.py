@@ -1,7 +1,7 @@
 import sqlite3
 from Constants import *
-import GDriveConnect
-from flask import render_template, request, redirect, url_for, flash, abort, session, jsonify, Blueprint, Flask
+from GDriveConnect import *
+from flask import render_template, Flask, request, redirect, url_for, flash
 
 app = Flask(__name__)
 app.secret_key = 'nglknfkgm;mf;gmn03h4w3t8409t'
@@ -15,8 +15,6 @@ def home():
 @app.route('/add-patient', methods=['GET', 'POST'])
 def add_patient():
     if request.method == 'POST':
-        print(request.referrer)
-        print(request.form)
         fullname = request.form['fullname']
         id_number = request.form['id']
         serial_year_num = request.form['serialYearNum']
@@ -46,7 +44,6 @@ def add_patient():
 @app.route('/search-patient', methods=['GET', 'POST'])
 def search_patient():
     if request.method == 'POST':
-        print("searching...")
         status, results = search_patient_func(request.form['searchMethod'], request.form['search'])
         if type(results) is list and len(results) > 0:
             global data_dict
@@ -66,13 +63,11 @@ data_dict = {}
 
 @app.route('/search-results', methods=['GET', 'POST'])
 def search_results():
-    print("Showing search results...")
     return render_template('search-results.html')
 
 
 @app.route('/show-search-results', methods=['GET', 'POST'])
 def show_search_results():
-    print("Showing results...")
     if request.form['searchResults'] == "---":
         flash("لا يوجد نتيجة!", "error")
         return redirect(url_for("home"))
@@ -221,7 +216,7 @@ def search_patient_func(search_method, search_for=None):
 
 @app.route('/save_to_GDrive', methods=["POST"])
 def save_to_google_drive():
-    if GDriveConnect.save_func() == 0:
+    if save_func() == 0:
         flash("تم الحفظ في جوجل درايف!", "success")
     else:
         flash("فشل الحفظ إلى جوجل درايف!", "error")
@@ -230,7 +225,7 @@ def save_to_google_drive():
 
 @app.route('/load_from_GDrive', methods=["POST"])
 def load_from_google_drive():
-    if GDriveConnect.load_func() == 0:
+    if load_func() == 0:
         flash("تم إستعادة الملفات بنجاح!", "success")
     else:
         flash("فشلت الإستعادة!", "error")
@@ -239,18 +234,50 @@ def load_from_google_drive():
 
 @app.route('/xlsx_backup', methods=["POST"])
 def xlsx_backup():
-    if GDriveConnect.do_backup_xlsx() == 0:
+    if do_backup_xlsx() == 0:
         flash("تم التحويل بنجاح!", "success")
     else:
         flash("فشل النسح الاحتياطي\n", "error")
     return redirect(url_for("home"))
 
+arabic_sql_create_table = """
+create table if not exists Patient(
+    سنة_الرقم_التسلسلي nvarchar(4),
+    الرقم_التسلسلي nvarchar(20),
+    الإسم_الثلاثي nvarchar(45) primary key,
+    الإسم_الشخصي nvarchar(15),
+    إسم_الأب nvarchar(15),
+    إسم_العائلة nvarchar(15),
+    رقم_الهوية nvarchar(9),
+    الجنس nvarchar(7),
+    الحالة_الإجتماعية nvarchar(15),
+    العمر nvarchar(3),
+    أولاد nvarchar(3),
+    صلاة nvarchar(5),
+    صحة nvarchar(30),
+    العمل nvarchar(30),
+    المرافق nvarchar(30),
+    البلد nvarchar(20),
+    الهاتف nvarchar(12),
+    وصف_الحالة nvarchar(200),
+    التشخيص nvarchar(100),
+    العلاج nvarchar(400)
+)
+"""
+
+
+def create_table():
+    with sqlite3.connect("Patient.db") as connection:
+        cursor = connection.cursor()
+        try:
+            cursor.execute(arabic_sql_create_table)
+            connection.commit()
+        except Exception as e:
+            # print(str(e))
+            tkinter.messagebox.showerror("خطأ", "خطأ في بناء الجدول!\n" + str(e))
+            connection.rollback()
+
 
 if __name__ == "__main__":
-    # app.config["ENV"] = "development"
-    # app.config["DEBUG"] = 1
-    import subprocess
-
-    # webbrowser.open("http://127.0.0.1:5000")
+    create_table()
     app.run()
-    subprocess.run("open http://127.0.0.1:5000", shell=True)
