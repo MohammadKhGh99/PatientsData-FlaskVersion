@@ -1,5 +1,5 @@
 application: patientsdata
-runtime: python
+runtime: python310
 env: flex
 api_version: 1
 threadsafe: true
@@ -7,7 +7,3 @@ threadsafe: true
 handlers:
   - url: /.*
     script: app.app
-
-libraries:
-  - name: flask
-    version: 0.12
