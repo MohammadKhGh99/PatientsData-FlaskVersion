@@ -1,9 +1,48 @@
+import os
+import signal
 import sqlite3
 from Constants import *
 from GDriveConnect import *
 from flask import render_template, Flask, request, redirect, url_for, flash
+import webbrowser
+
+arabic_sql_create_table = """
+create table if not exists Patient(
+    سنة_الرقم_التسلسلي nvarchar(4),
+    الرقم_التسلسلي nvarchar(20),
+    الإسم_الثلاثي nvarchar(45) primary key,
+    الإسم_الشخصي nvarchar(15),
+    إسم_الأب nvarchar(15),
+    إسم_العائلة nvarchar(15),
+    رقم_الهوية nvarchar(9),
+    الجنس nvarchar(7),
+    الحالة_الإجتماعية nvarchar(15),
+    العمر nvarchar(3),
+    أولاد nvarchar(3),
+    صلاة nvarchar(5),
+    صحة nvarchar(30),
+    العمل nvarchar(30),
+    المرافق nvarchar(30),
+    البلد nvarchar(20),
+    الهاتف nvarchar(12),
+    وصف_الحالة nvarchar(200),
+    التشخيص nvarchar(100),
+    العلاج nvarchar(400)
+)
+"""
+
+# def create_table():
+with sqlite3.connect("Patient.db") as connection:
+    cursor = connection.cursor()
+    try:
+        cursor.execute(arabic_sql_create_table)
+        connection.commit()
+    except Exception as e:
+        flash(str(e), 'error')
+        connection.rollback()
 
 app = Flask(__name__)
+webbrowser.open("http://127.0.0.1:5000")
 app.secret_key = 'nglknfkgm;mf;gmn03h4w3t8409t'
 
 
@@ -91,7 +130,8 @@ def show_search_results():
     therapy = data_dict[request.form['searchResults']][THERAPY[1:]]
 
     return render_template('show-search-results.html', fullname=fullname, id=id_number, serialYearNum=serial_year_num,
-                           serialNum=serial_num, status=status, age=age, gender=gender, children=children, prayer=prayer,
+                           serialNum=serial_num, status=status, age=age, gender=gender, children=children,
+                           prayer=prayer,
                            city=city, phone=phone, work=work, health=health, companion=companion,
                            description=description, diagnosis=diagnosis, therapy=therapy)
 
@@ -139,7 +179,7 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
                 flash('تم الحفظ بنجاح!', 'success')
             except Exception as e:
                 connection.rollback()
-                flash('حدث خطأ أثناء الحفظ! ' + str(e), 'error')
+                flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
                 return False
         else:
             first, middle, last = fullname.split(' ')
@@ -154,7 +194,7 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
                 flash('تم الحفظ بنجاح!', 'success')
             except Exception as e:
                 connection.rollback()
-                flash('حدث خطأ أثناء الحفظ! ' + str(e), 'error')
+                flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
                 return False
     return True
 
@@ -202,7 +242,7 @@ def search_patient_func(search_method, search_for=None):
                     to_return.append(row)
         except Exception as e:
             connection.rollback()
-            flash('حدث خطأ أثناء البحث! ' + str(e), 'error')
+            flash('حدث خطأ أثناء البحث! \n' + str(e), 'error')
             return -1, "ERROR in SQL!"
 
         if len(to_return) == 0:
@@ -216,68 +256,31 @@ def search_patient_func(search_method, search_for=None):
 
 @app.route('/save_to_GDrive', methods=["POST"])
 def save_to_google_drive():
-    if save_func() == 0:
-        flash("تم الحفظ في جوجل درايف!", "success")
-    else:
-        flash("فشل الحفظ إلى جوجل درايف!", "error")
+    save_func()
     return redirect(url_for("home"))
 
 
 @app.route('/load_from_GDrive', methods=["POST"])
 def load_from_google_drive():
-    if load_func() == 0:
-        flash("تم إستعادة الملفات بنجاح!", "success")
-    else:
-        flash("فشلت الإستعادة!", "error")
+    load_func()
     return redirect(url_for("home"))
 
 
 @app.route('/xlsx_backup', methods=["POST"])
 def xlsx_backup():
-    if do_backup_xlsx() == 0:
-        flash("تم التحويل بنجاح!", "success")
-    else:
-        flash("فشل النسح الاحتياطي\n", "error")
+    do_backup_xlsx()
     return redirect(url_for("home"))
 
-arabic_sql_create_table = """
-create table if not exists Patient(
-    سنة_الرقم_التسلسلي nvarchar(4),
-    الرقم_التسلسلي nvarchar(20),
-    الإسم_الثلاثي nvarchar(45) primary key,
-    الإسم_الشخصي nvarchar(15),
-    إسم_الأب nvarchar(15),
-    إسم_العائلة nvarchar(15),
-    رقم_الهوية nvarchar(9),
-    الجنس nvarchar(7),
-    الحالة_الإجتماعية nvarchar(15),
-    العمر nvarchar(3),
-    أولاد nvarchar(3),
-    صلاة nvarchar(5),
-    صحة nvarchar(30),
-    العمل nvarchar(30),
-    المرافق nvarchar(30),
-    البلد nvarchar(20),
-    الهاتف nvarchar(12),
-    وصف_الحالة nvarchar(200),
-    التشخيص nvarchar(100),
-    العلاج nvarchar(400)
-)
-"""
 
+@app.route('/shutdown', methods=['POST', 'GET'])
+def shutdown():
+    if request.method == 'POST':
+        os.kill(os.getpid(), signal.SIGINT)
+    return 'Flask app shutting down...'
 
-def create_table():
-    with sqlite3.connect("Patient.db") as connection:
-        cursor = connection.cursor()
-        try:
-            cursor.execute(arabic_sql_create_table)
-            connection.commit()
-        except Exception as e:
-            # print(str(e))
-            tkinter.messagebox.showerror("خطأ", "خطأ في بناء الجدول!\n" + str(e))
-            connection.rollback()
-
-
-if __name__ == "__main__":
-    create_table()
-    app.run()
+# if __name__ == "__main__":
+#     create_table()
+#     # app.config["ENV"] = "development"
+#     app.config["HOST"] = "0.0.0.0"
+#     app.config["DEBUG"] = 1
+#     app.run()

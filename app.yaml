@@ -1,8 +1,0 @@
-runtime: python310
-env: flex
-api_version: 1
-threadsafe: true
-
-handlers:
-  - url: /.*
-    script: app.app

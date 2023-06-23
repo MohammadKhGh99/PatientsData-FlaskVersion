@@ -1,10 +1,9 @@
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
-import tkinter.messagebox
 import sqlite3
 import pandas as pd
-
 from flask import flash
+
 gauth = None
 root_folder = None
 drive = None
@@ -12,11 +11,13 @@ drive = None
 
 def do_backup_xlsx():
     try:
-        with sqlite3.connect("Patient.db") as connection:
+        with sqlite3.connect("patientsdata/Patient.db") as connection:
             df = pd.read_sql("SELECT * from Patient", connection)
             df.to_excel("نسخ_إحتياطي.xlsx")
+        flash("تم التحويل بنجاح!", "success")
         return 0
     except Exception as e:
+        flash("لم يتم التحويل إلى ملف إكسل! \n" + str(e), "error")
         return 1
 
 
@@ -47,7 +48,7 @@ def authentication_func():
 
 # replace the value of this variable
 # with the absolute path of the directory
-db_path = r"Patient.db"
+db_path = r"patientsdata/Patient.db"
 xlsx_path = r"نسخ_إحتياطي.xlsx"
 
 
@@ -79,9 +80,10 @@ def save_func():
             # memory leak, therefore preventing its
             # deletion
             f = None
+        flash("تم الحفظ في جوجل درايف!", "success")
         return 0
     except Exception as e:
-        print(str(e))
+        flash("لم يتم الحفظ! \n" + str(e), "error")
         return 1
 
 
@@ -93,15 +95,8 @@ def load_func():
         root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList()
         for file in root_list:
             file.GetContentFile(fr"نسخ_إحتياطي\{file['title']}")
-
-        # with sqlite3.connect("Patient.db") as connection:
-        #     cursor = connection.cursor()
-        #     cursor.execute('DELETE FROM Patient')
-        #     connection.commit()
-
-            # wb = pd.read_excel('BackUp.xlsx', sheet_name='Sheet')
-            # wb.to_sql(name='Patient', con=connection, if_exists='replace', index=True)
-            # connection.commit()
+        flash("تم إستعادة الملفات بنجاح!", "success")
         return 0
     except Exception as e:
+        flash("لم تتم الإستعادة! \n" + str(e), "error")
         return 1
