@@ -1,0 +1,130 @@
+.title {
+  font-family:Traditional Arabic;
+  text-align: center;
+  font-size: 20px;
+}
+
+.button {
+  /*background-color: #4CAF50; !* Set the background color *!*/
+  border: none; /* Remove the border */
+  /*color: white; !* Set the text color *!*/
+  padding: 5px 10px; /* Add some padding */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove text decoration */
+  display: inline-block; /* Display as inline block */
+  font-size: 20px; /* Set the font size */
+  cursor: pointer; /* Add cursor pointer */
+  border-radius: 5px; /* Apply rounded corners */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Add box shadow */
+  height: 30px;
+  width: 180px;
+}
+
+/* Change button color when hovered */
+.button:hover {
+  background-color: #45a049;
+}
+
+/* Change button color when pressed */
+.button:active {
+  background-color: #3e8e41;
+}
+
+.gdrive-button {
+  border: none; /* Remove the border */
+  color: green; /* Set the text color */
+  padding: 5px 10px; /* Add some padding */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove text decoration */
+  display: inline-block; /* Display as inline block */
+  font-size: 16px; /* Set the font size */
+  cursor: pointer; /* Add cursor pointer */
+  border-radius: 5px; /* Apply rounded corners */
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Add box shadow */
+  height: 30px;
+  width: 150px;
+}
+
+/* Change button color when hovered */
+.gdrive-button:hover {
+  background-color: #45a049;
+}
+
+/* Change button color when pressed */
+.gdrive-button:active {
+  background-color: #3e8e41;
+}
+
+/* styles.css */
+.txt-input {
+  border: 1px solid #ccc;
+  padding: 3px;
+  width: 250px;
+  height: 30px;
+  /*font-family: Arial, sans-serif;*/
+  font-size: 20px;
+  color: #333;
+}
+
+.txt-input::placeholder {
+  color: #999;
+}
+
+.txt-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px #007bff;
+}
+
+.txtarea-input {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 1000px;
+  height: 150px;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #333;
+}
+
+.txtarea-input::placeholder {
+  color: #999;
+}
+
+.txtarea-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px #007bff;
+}
+
+.labels {
+  font-size: 18px;
+}
+
+
+/*form {*/
+/*  width: 300px;*/
+/*  padding: 200px;*/
+/*  border: 10px solid #ccc;*/
+/*  background-color: #f8f8f8;*/
+/*}*/
+
+/*input[type="text"],*/
+/*textarea {*/
+/*  width: 100%;*/
+/*  padding: 10px;*/
+/*  margin-bottom: 10px;*/
+/*  border: 1px solid #ccc;*/
+/*}*/
+
+/*button {*/
+/*  padding: 10px 20px;*/
+/*  background-color: #4CAF50;*/
+/*  color: white;*/
+/*  border: none;*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*button:hover {*/
+/*  background-color: #45a049;*/
+/*}*/
+

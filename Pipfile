@@ -7,9 +7,8 @@ name = "pypi"
 flask = "*"
 pydrive = "*"
 pandas = "*"
-gunicorn = "*"
-waitress = "*"
-wfastcgi = "*"
+auto-py-to-exe = "*"
+webview = "*"
 
 [dev-packages]
 

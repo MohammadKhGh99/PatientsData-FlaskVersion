@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title style="font-family:Traditional Arabic;">المعالجة بالرقية الشرعية</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+  <h1 class="title" style="font-size: 30px">بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم</h1>
+  <h2 class="title">بطاقة علاج</h2>
+
+  <form action="shutdown" method="post">
+    <input type="submit" value="إغلاق" class="button" style="width: 70px; background-color: red">
+  </form>
+  <br>
+
+{#  <a href="{{url_for('shutdown')}}">#}
+{#    <button id="shutdown_button" class="button" style="width: 70px; background-color: red">إغلاق</button>#}
+{#  </a>#}
+
+{#  <a href="{{url_for('home')}}">#}
+{#    <button id="back-to-main-menu" class="button" style="font-size: 20px; width: 140px; height: 60px;">العودة إلى القائمة الرئيسية</button>#}
+{#  </a>#}
+{#  <br><br>#}
+
+  {% for message in get_flashed_messages(category_filter=["success"]) %}
+    <div role="alert" style="color: lawngreen">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
+
+  {% for message in get_flashed_messages(category_filter=["error"]) %}
+    <div role="alert" style="color: red">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
+
+  <br><br>
+
+  <div style="text-align: center;">
+    <a href="{{url_for('add_patient')}}">
+      <button id="add-patient" class="button" >إضافة مريض جديد</button>
+    </a>
+    <br><br>
+
+    <a href="{{url_for('search_patient')}}">
+      <button id="search-patient" class="button" >ابحث عن مريض</button>
+    </a>
+    <br><br>
+
+    <form action="/save_to_GDrive" method="POST">
+      <input id="save-to-gdrive" class="gdrive-button" value="حفظ في جوجل درايف" type="submit">
+    </form>
+    <br>
+
+    <form action="/load_from_GDrive" method="POST">
+      <input id="restore-from-gdrive" class="gdrive-button" type="submit" value="استعادة من جوجل درايف">
+    </form>
+    <br>
+
+    <form action="/xlsx_backup" method="POST">
+      <input id="convert-to-xlsx" class="gdrive-button" type="submit" value="تحويل إلى ملف اكسل">
+    </form>
+    <br><br>
+  </div>
+
+</body>
+</html>

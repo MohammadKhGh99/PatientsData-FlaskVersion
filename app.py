@@ -6,43 +6,7 @@ from GDriveConnect import *
 from flask import render_template, Flask, request, redirect, url_for, flash
 import webbrowser
 
-arabic_sql_create_table = """
-create table if not exists Patient(
-    سنة_الرقم_التسلسلي nvarchar(4),
-    الرقم_التسلسلي nvarchar(20),
-    الإسم_الثلاثي nvarchar(45) primary key,
-    الإسم_الشخصي nvarchar(15),
-    إسم_الأب nvarchar(15),
-    إسم_العائلة nvarchar(15),
-    رقم_الهوية nvarchar(9),
-    الجنس nvarchar(7),
-    الحالة_الإجتماعية nvarchar(15),
-    العمر nvarchar(3),
-    أولاد nvarchar(3),
-    صلاة nvarchar(5),
-    صحة nvarchar(30),
-    العمل nvarchar(30),
-    المرافق nvarchar(30),
-    البلد nvarchar(20),
-    الهاتف nvarchar(12),
-    وصف_الحالة nvarchar(200),
-    التشخيص nvarchar(100),
-    العلاج nvarchar(400)
-)
-"""
-
-# def create_table():
-with sqlite3.connect("Patient.db") as connection:
-    cursor = connection.cursor()
-    try:
-        cursor.execute(arabic_sql_create_table)
-        connection.commit()
-    except Exception as e:
-        flash(str(e), 'error')
-        connection.rollback()
-
 app = Flask(__name__)
-webbrowser.open("http://127.0.0.1:5000")
 app.secret_key = 'nglknfkgm;mf;gmn03h4w3t8409t'
 
 
@@ -91,7 +55,7 @@ def search_patient():
                 data_dict = {f'{row[ALL_NAME]} - {row[CITY[1:]]}': row for row in results}
             return render_template('search-results.html', data=data_dict.keys())
         else:
-            flash("لم بتم إيجاد نتائج!", "error")
+            flash("لم يتم إيجاد نتائج!", "error")
             return redirect(url_for('home'))
     else:
         return render_template("search-patient.html")
@@ -274,13 +238,50 @@ def xlsx_backup():
 
 @app.route('/shutdown', methods=['POST', 'GET'])
 def shutdown():
+    print("shutdown")
     if request.method == 'POST':
+        # print("post")
         os.kill(os.getpid(), signal.SIGINT)
-    return 'Flask app shutting down...'
+    return render_template("shutdown.html")
 
-# if __name__ == "__main__":
-#     create_table()
-#     # app.config["ENV"] = "development"
-#     app.config["HOST"] = "0.0.0.0"
-#     app.config["DEBUG"] = 1
-#     app.run()
+
+def create_table():
+    arabic_sql_create_table = """
+    create table if not exists Patient(
+        سنة_الرقم_التسلسلي nvarchar(4),
+        الرقم_التسلسلي nvarchar(20),
+        الإسم_الثلاثي nvarchar(45) primary key,
+        الإسم_الشخصي nvarchar(15),
+        إسم_الأب nvarchar(15),
+        إسم_العائلة nvarchar(15),
+        رقم_الهوية nvarchar(9),
+        الجنس nvarchar(7),
+        الحالة_الإجتماعية nvarchar(15),
+        العمر nvarchar(3),
+        أولاد nvarchar(3),
+        صلاة nvarchar(5),
+        صحة nvarchar(30),
+        العمل nvarchar(30),
+        المرافق nvarchar(30),
+        البلد nvarchar(20),
+        الهاتف nvarchar(12),
+        وصف_الحالة nvarchar(200),
+        التشخيص nvarchar(100),
+        العلاج nvarchar(400)
+    )
+    """
+
+    with sqlite3.connect("Patient.db") as connection:
+        cursor = connection.cursor()
+        try:
+            cursor.execute(arabic_sql_create_table)
+            connection.commit()
+        except Exception as e:
+            flash(str(e), 'error')
+            connection.rollback()
+
+
+if __name__ == "__main__":
+    create_table()
+    webbrowser.open("http://127.0.0.1:5000")
+    app.run()
