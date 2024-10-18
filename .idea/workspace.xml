@@ -8,15 +8,6 @@
       <change beforePath="$PROJECT_DIR$/../MyProject/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../MyProject/.idea/vcs.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/add-patient.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/add-patient.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/page_not_found.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/page_not_found.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/search-patient.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search-patient.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/search-results.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/search-results.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/show-search-results.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/show-search-results.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../PatientsData/.idea/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../PatientsData/.idea/PatientsData.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../PatientsData/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
@@ -1142,6 +1133,8 @@
       <workItem from="1686845346722" duration="620000" />
       <workItem from="1687457908824" duration="111000" />
       <workItem from="1687458118705" duration="15517000" />
+      <workItem from="1689842956542" duration="63000" />
+      <workItem from="1692020567280" duration="637000" />
     </task>
     <servers />
   </component>

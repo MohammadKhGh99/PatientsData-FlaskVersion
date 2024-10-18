@@ -59,7 +59,7 @@ def save_func():
         if drive is None or gauth is None:
             authentication_func()
 
-        root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList()
+        root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList() # type: ignore
         for file in root_list:
             if file['title'] == xlsx_path:
                 file.Delete()
@@ -69,7 +69,7 @@ def save_func():
         # of the desired directory
 
         for x in [db_path, xlsx_path]:
-            f = drive.CreateFile({'parents': [{'id': f"{root_folder['id']}"}]})
+            f = drive.CreateFile({'parents': [{'id': f"{root_folder['id']}"}]}) # type: ignore
             f.SetContentFile(x)
             f.Upload()
 
@@ -88,11 +88,12 @@ def save_func():
 
 
 def load_func():
+    global root_folder
     try:
         if drive is None or gauth is None:
             authentication_func()
 
-        root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList()
+        root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList() # type: ignore
         for file in root_list:
             file.GetContentFile(fr"نسخ_إحتياطي\{file['title']}")
         flash("تم إستعادة الملفات بنجاح!", "success")
