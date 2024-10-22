@@ -1,3 +1,4 @@
+import os
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 import sqlite3
@@ -11,14 +12,18 @@ drive = None
 
 def do_backup_xlsx():
     try:
-        with sqlite3.connect("patientsdata/Patient.db") as connection:
+        with sqlite3.connect("Patient.db") as connection:
             df = pd.read_sql("SELECT * from Patient", connection)
+            # Check if the file exists
+            if os.path.exists("نسخ_إحتياطي.xlsx"):
+                # Remove the file
+                os.remove("نسخ_إحتياطي.xlsx")
             df.to_excel("نسخ_إحتياطي.xlsx")
         flash("تم التحويل بنجاح!", "success")
         return 0
     except Exception as e:
         flash("لم يتم التحويل إلى ملف إكسل! \n" + str(e), "error")
-        return 1
+        raise e
 
 
 def authentication_func():
@@ -26,10 +31,23 @@ def authentication_func():
     # part of the code
     global gauth, root_folder, drive
     gauth = GoogleAuth()
+    
+    if os.path.exists('credentials.txt'):
+        gauth.LoadCredentialsFile('credentials.txt')
 
-    # Creates local webserver and auto
-    # handles authentication.
-    gauth.LocalWebserverAuth()
+         # Refresh the token if expired
+        if gauth.access_token_expired:
+            gauth.Refresh()
+        else:
+            gauth.Authorize()  # Reauthorize if needed
+
+    else:
+        # Perform OAuth authentication
+        gauth.LocalWebserverAuth()  # Open a local webserver for user login
+
+        # Save the credentials for future use
+        gauth.SaveCredentialsFile('credentials.txt')
+        
     drive = GoogleDrive(gauth)
 
     # searching for the root folder to save to
@@ -48,7 +66,7 @@ def authentication_func():
 
 # replace the value of this variable
 # with the absolute path of the directory
-db_path = r"patientsdata/Patient.db"
+db_path = r"Patient.db"
 xlsx_path = r"نسخ_إحتياطي.xlsx"
 
 
@@ -84,7 +102,7 @@ def save_func():
         return 0
     except Exception as e:
         flash("لم يتم الحفظ! \n" + str(e), "error")
-        return 1
+        raise e
 
 
 def load_func():

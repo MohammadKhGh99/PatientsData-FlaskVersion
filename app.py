@@ -15,6 +15,74 @@ def home():
     return render_template('home.html')
 
 
+def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer, city,
+                      phone, work, health, companion, description, diagnosis, therapy, after_search=False):
+    # status = status.split("\\")[0] if gender == "ذكر" else status.split("\\")[1]
+
+    with sqlite3.connect("Patient.db") as connection:
+        cursor = connection.cursor()
+        cursor.execute(f"select * from Patient where الإسم_الثلاثي = '{fullname}'")
+        if len(cursor.fetchall()) > 0:
+            after_search = True
+        if after_search:
+            splitted_name = fullname.split(' ')
+            if len(splitted_name) == 3:
+                first, middle, last = splitted_name
+            else:
+                first, last = splitted_name
+                middle = ""
+            try:
+                cursor.execute(f"update Patient "
+                               f"set سنة_الرقم_التسلسلي = '{serial_year_num}',"
+                               f"الرقم_التسلسلي = '{serial_num}',"
+                               f"الإسم_الثلاثي = '{fullname}',"
+                               f"الإسم_الشخصي = '{first}',"
+                               f" إسم_الأب = '{middle}',"
+                               f" إسم_العائلة = '{last}', "
+                               f"رقم_الهوية = '{id_number}',"
+                               f" الجنس = '{gender}', "
+                               f"الحالة_الإجتماعية = '{status}',"
+                               f" العمر = '{age}', "
+                               f"أولاد = '{children}',"
+                               f" صلاة = '{prayer}', "
+                               f"صحة = '{health}',"
+                               f" العمل = '{work}', "
+                               f"المرافق = '{companion}',"
+                               f" البلد = '{city}', "
+                               f"الهاتف = '{phone}',"
+                               f" وصف_الحالة = '{description}', "
+                               f"التشخيص = '{diagnosis}',"
+                               f" العلاج = '{therapy}' "
+                               f"where الإسم_الثلاثي = '{fullname}'")
+                connection.commit()
+                flash('تم الحفظ بنجاح!', 'success')
+            except Exception as e:
+                connection.rollback()
+                flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
+                return False
+        else:
+            splitted_name = fullname.split(' ')
+            if len(splitted_name) == 3:
+                first, middle, last = splitted_name
+            else:
+                first, last = splitted_name
+                middle = ""
+            try:
+                cursor.execute(
+                    "INSERT INTO Patient "
+                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (serial_year_num, serial_num, fullname, first, middle, last,
+                     id_number, gender, status, age, children, prayer, health,
+                     work, companion, city, phone, description, diagnosis, therapy))
+                connection.commit()
+                flash('تم الحفظ بنجاح!', 'success')
+            except Exception as e:
+                connection.rollback()
+                flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
+                return False
+    return True
+
+
 @app.route('/add-patient', methods=['GET', 'POST'])
 def add_patient():
     if request.method == 'POST':
@@ -103,64 +171,6 @@ def show_search_results():
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
-
-
-def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer, city,
-                      phone, work, health, companion, description, diagnosis, therapy, after_search=False):
-    # status = status.split("\\")[0] if gender == "ذكر" else status.split("\\")[1]
-
-    with sqlite3.connect("Patient.db") as connection:
-        cursor = connection.cursor()
-        cursor.execute(f"select * from Patient where الإسم_الثلاثي = '{fullname}'")
-        if len(cursor.fetchall()) > 0:
-            after_search = True
-        if after_search:
-            first, middle, last = fullname.split(' ')
-            try:
-                cursor.execute(f"update Patient "
-                               f"set سنة_الرقم_التسلسلي = '{serial_year_num}',"
-                               f"الرقم_التسلسلي = '{serial_num}',"
-                               f"الإسم_الثلاثي = '{fullname}',"
-                               f"الإسم_الشخصي = '{first}',"
-                               f" إسم_الأب = '{middle}',"
-                               f" إسم_العائلة = '{last}', "
-                               f"رقم_الهوية = '{id_number}',"
-                               f" الجنس = '{gender}', "
-                               f"الحالة_الإجتماعية = '{status}',"
-                               f" العمر = '{age}', "
-                               f"أولاد = '{children}',"
-                               f" صلاة = '{prayer}', "
-                               f"صحة = '{health}',"
-                               f" العمل = '{work}', "
-                               f"المرافق = '{companion}',"
-                               f" البلد = '{city}', "
-                               f"الهاتف = '{phone}',"
-                               f" وصف_الحالة = '{description}', "
-                               f"التشخيص = '{diagnosis}',"
-                               f" العلاج = '{therapy}' "
-                               f"where الإسم_الثلاثي = '{fullname}'")
-                connection.commit()
-                flash('تم الحفظ بنجاح!', 'success')
-            except Exception as e:
-                connection.rollback()
-                flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
-                return False
-        else:
-            first, middle, last = fullname.split(' ')
-            try:
-                cursor.execute(
-                    "INSERT INTO Patient "
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (serial_year_num, serial_num, fullname, first, middle, last,
-                     id_number, gender, status, age, children, prayer, health,
-                     work, companion, city, phone, description, diagnosis, therapy))
-                connection.commit()
-                flash('تم الحفظ بنجاح!', 'success')
-            except Exception as e:
-                connection.rollback()
-                flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
-                return False
-    return True
 
 
 def search_patient_func(search_method, search_for=None):
@@ -284,4 +294,4 @@ def create_table():
 if __name__ == "__main__":
     create_table()
     webbrowser.open("http://127.0.0.1:5000")
-    app.run()
+    app.run(debug=True)

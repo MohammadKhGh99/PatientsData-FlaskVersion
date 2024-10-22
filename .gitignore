@@ -1,5 +1,14 @@
 .idea
-__pycache__
+__pycache__/
 client_secrets.json
 venv
 .venv
+
+credentials.txt
+المعالجة الشرعية.html
+نسخ_إحتياطي.xlsx
+Patient.db
+*.jpg
+*.png
+*.webp
+*.avif
