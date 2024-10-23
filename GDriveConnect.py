@@ -2,23 +2,44 @@ import os
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 import sqlite3
-import pandas as pd
+# import pandas as pd
+import csv
 from flask import flash
 
 gauth = None
 root_folder = None
 drive = None
+db_path = r"Patient.db"
+excel_path = r"نسخ_إحتياطي.csv"
 
 
 def do_backup_xlsx():
     try:
-        with sqlite3.connect("Patient.db") as connection:
-            df = pd.read_sql("SELECT * from Patient", connection)
+        with sqlite3.connect(db_path) as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM Patient")
+            rows = cursor.fetchall()
+            column_names = [description[0] for description in cursor.description]
+
             # Check if the file exists
-            if os.path.exists("نسخ_إحتياطي.xlsx"):
+            if os.path.exists(excel_path):
                 # Remove the file
-                os.remove("نسخ_إحتياطي.xlsx")
-            df.to_excel("نسخ_إحتياطي.xlsx")
+                os.remove(excel_path)
+
+            # Write data to CSV file
+            with open(excel_path, mode='w', newline='', encoding='utf-8-sig') as file:
+                writer = csv.writer(file)
+                writer.writerow(column_names)  # Write column headers
+                writer.writerows(rows)  # Write data rows
+
+
+
+            # df = pd.read_sql("SELECT * from Patient", connection)
+            # # Check if the file exists
+            # if os.path.exists("نسخ_إحتياطي.xlsx"):
+            #     # Remove the file
+            #     os.remove("نسخ_إحتياطي.xlsx")
+            # df.to_excel("نسخ_إحتياطي.xlsx")
         flash("تم التحويل بنجاح!", "success")
         return 0
     except Exception as e:
@@ -64,12 +85,6 @@ def authentication_func():
         root_folder.Upload()
 
 
-# replace the value of this variable
-# with the absolute path of the directory
-db_path = r"Patient.db"
-xlsx_path = r"نسخ_إحتياطي.xlsx"
-
-
 def save_func():
     do_backup_xlsx()
     global root_folder
@@ -79,14 +94,14 @@ def save_func():
 
         root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList() # type: ignore
         for file in root_list:
-            if file['title'] == xlsx_path:
+            if file['title'] == excel_path:
                 file.Delete()
             if file['title'] == db_path:
                 file.Delete()
         # iterating thought all the files/folder
         # of the desired directory
 
-        for x in [db_path, xlsx_path]:
+        for x in [db_path, excel_path]:
             f = drive.CreateFile({'parents': [{'id': f"{root_folder['id']}"}]}) # type: ignore
             f.SetContentFile(x)
             f.Upload()

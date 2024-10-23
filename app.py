@@ -6,6 +6,7 @@ from GDriveConnect import *
 from flask import render_template, Flask, request, redirect, url_for, flash
 import webbrowser
 
+
 app = Flask(__name__)
 app.secret_key = 'nglknfkgm;mf;gmn03h4w3t8409t'
 
@@ -294,4 +295,4 @@ def create_table():
 if __name__ == "__main__":
     create_table()
     webbrowser.open("http://127.0.0.1:5000")
-    app.run(debug=True)
+    app.run()
