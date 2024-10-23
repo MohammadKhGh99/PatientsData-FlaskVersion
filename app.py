@@ -293,6 +293,7 @@ def create_table():
 
 
 if __name__ == "__main__":
-    create_table()
+    if not os.path.exists("Patient.db"):
+        create_table()
     webbrowser.open("http://127.0.0.1:5000")
     app.run()
