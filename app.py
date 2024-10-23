@@ -60,6 +60,7 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
             except Exception as e:
                 connection.rollback()
                 flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
+                print(e)
                 return False
         else:
             splitted_name = fullname.split(' ')
@@ -80,6 +81,7 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
             except Exception as e:
                 connection.rollback()
                 flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
+                print(e)
                 return False
     return True
 
@@ -218,6 +220,7 @@ def search_patient_func(search_method, search_for=None):
         except Exception as e:
             connection.rollback()
             flash('حدث خطأ أثناء البحث! \n' + str(e), 'error')
+            print(e)
             return -1, "ERROR in SQL!"
 
         if len(to_return) == 0:
@@ -290,6 +293,7 @@ def create_table():
         except Exception as e:
             flash(str(e), 'error')
             connection.rollback()
+            print(e)
 
 
 if __name__ == "__main__":

@@ -44,7 +44,8 @@ def do_backup_xlsx():
         return 0
     except Exception as e:
         flash("لم يتم التحويل إلى ملف إكسل! \n" + str(e), "error")
-        raise e
+        print(e)
+        return 1
 
 
 def authentication_func():
@@ -117,7 +118,8 @@ def save_func():
         return 0
     except Exception as e:
         flash("لم يتم الحفظ! \n" + str(e), "error")
-        raise e
+        print(e)
+        return 1
 
 
 def load_func():
@@ -133,4 +135,5 @@ def load_func():
         return 0
     except Exception as e:
         flash("لم تتم الإستعادة! \n" + str(e), "error")
+        print(e)
         return 1
