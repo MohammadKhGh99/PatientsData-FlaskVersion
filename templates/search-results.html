@@ -30,7 +30,7 @@
 
   <form id="search-results-page" class="form" method="POST" action="show-search-results">
     &ensp;&ensp;<label class="labels" for="searchResults">نتائج البحث:</label>
-    <select id="searchResults" class="txt-input" name="searchResults">
+    <select id="searchResults" class="txt-input" name="searchResults" style="width: 300px;">
       <option value="empty" disabled>---</option>
       {%for res in data%}
       <option value="{{res}}">{{res}}</option>

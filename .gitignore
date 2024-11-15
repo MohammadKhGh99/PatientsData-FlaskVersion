@@ -7,10 +7,10 @@ output
 credentials.txt
 المعالجة الشرعية.html
 نسخ_إحتياطي.*
-Patient.db
+علاج.db
 *.jpg
 *.png
 *.webp
 *.avif
 *.spec
-Patient.db
+علاج.db

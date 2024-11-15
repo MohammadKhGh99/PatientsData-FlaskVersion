@@ -16,22 +16,35 @@ def home():
     return render_template('home.html')
 
 
-def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer, city,
-                      phone, work, health, companion, description, diagnosis, therapy, after_search=False):
-    # status = status.split("\\")[0] if gender == "ذكر" else status.split("\\")[1]
-
-    with sqlite3.connect("Patient.db") as connection:
+def save_patient_func(form, update=False):
+    fullname = form['fullname'].strip()
+    id_number = form['id'].strip()
+    serial_year_num = form['serialYearNum'].strip()
+    serial_num = form['serialNum'].strip()
+    status = form['status'].strip()
+    age = form['age'].strip()
+    gender = form['gender'].strip()
+    children = form['children'].strip()
+    prayer = form['prayer'].strip()
+    city = form['city'].strip()
+    phone = form['phone'].strip()
+    work = form['work'].strip()
+    health = form['health'].strip()
+    companion = form['companion'].strip()
+    description = form['description'].strip()
+    diagnosis = form['diagnosis'].strip()
+    therapy = form['therapy'].strip()
+    
+    with sqlite3.connect("علاج.db") as connection:
         cursor = connection.cursor()
-        cursor.execute(f"select * from Patient where الإسم_الثلاثي = '{fullname}'")
-        if len(cursor.fetchall()) > 0:
-            after_search = True
-        if after_search:
-            splitted_name = fullname.split(' ')
-            if len(splitted_name) == 3:
-                first, middle, last = splitted_name
-            else:
-                first, last = splitted_name
-                middle = ""
+        # condition of updating a patient
+        splitted_name = fullname.split(' ')
+        if len(splitted_name) == 3:
+            first, middle, last = splitted_name
+        else:
+            first, last = splitted_name
+            middle = ""
+        if update:
             try:
                 cursor.execute(f"update Patient "
                                f"set سنة_الرقم_التسلسلي = '{serial_year_num}',"
@@ -54,7 +67,7 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
                                f" وصف_الحالة = '{description}', "
                                f"التشخيص = '{diagnosis}',"
                                f" العلاج = '{therapy}' "
-                               f"where الإسم_الثلاثي = '{fullname}'")
+                               f"where الرقم_التسلسلي = '{serial_num}'")
                 connection.commit()
                 flash('تم الحفظ بنجاح!', 'success')
             except Exception as e:
@@ -62,13 +75,8 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
                 flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
                 print(e)
                 return False
+        # condition of adding a new patient
         else:
-            splitted_name = fullname.split(' ')
-            if len(splitted_name) == 3:
-                first, middle, last = splitted_name
-            else:
-                first, last = splitted_name
-                middle = ""
             try:
                 cursor.execute(
                     "INSERT INTO Patient "
@@ -83,36 +91,27 @@ def save_patient_func(fullname, id_number, serial_year_num, serial_num, status, 
                 flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
                 print(e)
                 return False
+    if update:
+        return True, (fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer, city, phone, work, health, companion, description, diagnosis, therapy)
     return True
 
 
 @app.route('/add-patient', methods=['GET', 'POST'])
 def add_patient():
     if request.method == 'POST':
-        fullname = request.form['fullname']
-        id_number = request.form['id']
-        serial_year_num = request.form['serialYearNum']
-        serial_num = request.form['serialNum']
-        status = request.form['status']
-        age = request.form['age']
-        gender = request.form['gender']
-        children = request.form['children']
-        prayer = request.form['prayer']
-        city = request.form['city']
-        phone = request.form['phone']
-        work = request.form['work']
-        health = request.form['health']
-        companion = request.form['companion']
-        description = request.form['description']
-        diagnosis = request.form['diagnosis']
-        therapy = request.form['therapy']
-
-        save_patient_func(fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer,
-                          city, phone, work, health, companion, description, diagnosis, therapy)
-
+        save_patient_func(request.form)
         return redirect(url_for('add_patient'))
 
     return render_template('add-patient.html')
+
+
+@app.route('/update-patient', methods=['POST'])
+def update_patient():
+    boolean, results = save_patient_func(request.form, True) # type: ignore - special case don't worry
+    return render_template('show-search-results.html', fullname=results[0], id=results[1], serialYearNum=results[2],
+                        serialNum=results[3], status=results[4], age=results[5], gender=results[6], children=results[7],
+                        prayer=results[8], city=results[9], phone=results[10], work=results[11], health=results[12], companion=results[13],
+                        description=results[14], diagnosis=results[15], therapy=results[16])
 
 
 @app.route('/search-patient', methods=['GET', 'POST'])
@@ -123,7 +122,7 @@ def search_patient():
             global data_dict
             data_dict = {}
             if status == 0:
-                data_dict = {f'{row[ALL_NAME]} - {row[CITY[1:]]}': row for row in results}
+                data_dict = {f'{row[SERIAL[1:]]}: {row[ALL_NAME]} - {row[CITY[1:]]}': row for row in results}
             return render_template('search-results.html', data=data_dict.keys())
         else:
             flash("لم يتم إيجاد نتائج!", "error")
@@ -145,29 +144,29 @@ def show_search_results():
     if request.form['searchResults'] == "---":
         flash("لا يوجد نتيجة!", "error")
         return redirect(url_for("home"))
-    fullname = data_dict[request.form['searchResults']][ALL_NAME]
-    id_number = data_dict[request.form['searchResults']][ID[1:]]
+    # if request.method == "POST":
+    fullname = data_dict[request.form['searchResults']][ALL_NAME].strip()
+    id_number = data_dict[request.form['searchResults']][ID[1:]].strip()
 
-    serial_year_num = data_dict[request.form['searchResults']]["سنة الرقم التسلسلي"]
-    serial_num = data_dict[request.form['searchResults']]["الرقم التسلسلي"]
-    status = data_dict[request.form['searchResults']][STATUS[1:]]
-    age = data_dict[request.form['searchResults']][AGE[1:]]
-    gender = data_dict[request.form['searchResults']][GENDER[1:]]
-    children = data_dict[request.form['searchResults']][CHILDREN[1:]]
-    prayer = data_dict[request.form['searchResults']][PRAYER[1:]]
-    city = data_dict[request.form['searchResults']][CITY[1:]]
-    phone = data_dict[request.form['searchResults']][PHONE[1:]]
-    work = data_dict[request.form['searchResults']][WORK[1:]]
-    health = data_dict[request.form['searchResults']][HEALTH[1:]]
-    companion = data_dict[request.form['searchResults']][COMPANION[1:]]
-    description = data_dict[request.form['searchResults']][DESCRIPTION[1:]]
-    diagnosis = data_dict[request.form['searchResults']][DIAGNOSIS[1:]]
-    therapy = data_dict[request.form['searchResults']][THERAPY[1:]]
+    serial_year_num = data_dict[request.form['searchResults']]["سنة الرقم التسلسلي"].strip()
+    serial_num = data_dict[request.form['searchResults']]["الرقم التسلسلي"].strip()
+    status = data_dict[request.form['searchResults']][STATUS[1:]].strip()
+    age = data_dict[request.form['searchResults']][AGE[1:]].strip()
+    gender = data_dict[request.form['searchResults']][GENDER[1:]].strip()
+    children = data_dict[request.form['searchResults']][CHILDREN[1:]].strip()
+    prayer = data_dict[request.form['searchResults']][PRAYER[1:]].strip()
+    city = data_dict[request.form['searchResults']][CITY[1:]].strip()
+    phone = data_dict[request.form['searchResults']][PHONE[1:]].strip()
+    work = data_dict[request.form['searchResults']][WORK[1:]].strip()
+    health = data_dict[request.form['searchResults']][HEALTH[1:]].strip()
+    companion = data_dict[request.form['searchResults']][COMPANION[1:]].strip()
+    description = data_dict[request.form['searchResults']][DESCRIPTION[1:]].strip()
+    diagnosis = data_dict[request.form['searchResults']][DIAGNOSIS[1:]].strip()
+    therapy = data_dict[request.form['searchResults']][THERAPY[1:]].strip()
 
     return render_template('show-search-results.html', fullname=fullname, id=id_number, serialYearNum=serial_year_num,
                            serialNum=serial_num, status=status, age=age, gender=gender, children=children,
-                           prayer=prayer,
-                           city=city, phone=phone, work=work, health=health, companion=companion,
+                           prayer=prayer, city=city, phone=phone, work=work, health=health, companion=companion,
                            description=description, diagnosis=diagnosis, therapy=therapy)
 
 
@@ -178,7 +177,7 @@ def page_not_found(error):
 
 def search_patient_func(search_method, search_for=None):
     to_return = []
-    with sqlite3.connect("Patient.db") as connection:
+    with sqlite3.connect("علاج.db") as connection:
         cursor = connection.cursor()
 
         wanted_cols = 'الإسم_الثلاثي, رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, الرقم_التسلسلي, ' \
@@ -263,8 +262,8 @@ def create_table():
     arabic_sql_create_table = """
     create table if not exists Patient(
         سنة_الرقم_التسلسلي nvarchar(4),
-        الرقم_التسلسلي nvarchar(20),
-        الإسم_الثلاثي nvarchar(45) primary key,
+        الرقم_التسلسلي nvarchar(20) primary key,
+        الإسم_الثلاثي nvarchar(45),
         الإسم_الشخصي nvarchar(15),
         إسم_الأب nvarchar(15),
         إسم_العائلة nvarchar(15),
@@ -285,7 +284,7 @@ def create_table():
     )
     """
 
-    with sqlite3.connect("Patient.db") as connection:
+    with sqlite3.connect("علاج.db") as connection:
         cursor = connection.cursor()
         try:
             cursor.execute(arabic_sql_create_table)
@@ -297,7 +296,7 @@ def create_table():
 
 
 if __name__ == "__main__":
-    if not os.path.exists("Patient.db"):
+    if not os.path.exists("علاج.db"):
         create_table()
-    webbrowser.open("http://127.0.0.1:5000")
-    app.run()
+    # webbrowser.open("http://127.0.0.1:5000")
+    app.run(debug=False)

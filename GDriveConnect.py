@@ -9,7 +9,7 @@ from flask import flash
 gauth = None
 root_folder = None
 drive = None
-db_path = r"Patient.db"
+db_path = r"علاج.db"
 excel_path = r"نسخ_إحتياطي.csv"
 
 
