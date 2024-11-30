@@ -25,12 +25,26 @@ A software for storing patients data for therapists
 
 ## Installation
 
-1. Clone the repository: `git clone https://github.com/MohammadKhGh99/PatientsData-FlaskVersion.git`
-2. Install dependencies: `pip install -r requirments.txt`
+1. Clone the repository:
+
+   ```sh
+      git clone https://github.com/MohammadKhGh99/PatientsData-FlaskVersion.git
+   ```
+
+2. Install dependencies:
+
+   ```sh
+      pip install -r requirments.txt
+   ```
 
 ## Usage
 
-1. Start the server: `python app.py`
+1. Start the server:
+
+   ```sh
+      python app.py
+   ```
+
 2. It should open a new browser page for you, if not Open the website in your browser: [127.0.0.1:5000](http://127.0.0.1:5000)
 3. Add patient, click on the first button "إضافة مريض جديد":
    1. Fill the data of the patient.
