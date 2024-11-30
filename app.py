@@ -253,7 +253,6 @@ def xlsx_backup():
 def shutdown():
     print("shutdown")
     if request.method == 'POST':
-        # print("post")
         os.kill(os.getpid(), signal.SIGINT)
     return render_template("shutdown.html")
 
@@ -298,5 +297,5 @@ def create_table():
 if __name__ == "__main__":
     if not os.path.exists("علاج.db"):
         create_table()
-    # webbrowser.open("http://127.0.0.1:5000")
+    webbrowser.open("http://127.0.0.1:5000")
     app.run(debug=False)
