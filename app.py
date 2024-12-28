@@ -67,14 +67,14 @@ def save_patient_func(form, update=False):
                                f" وصف_الحالة = '{description}', "
                                f"التشخيص = '{diagnosis}',"
                                f" العلاج = '{therapy}' "
-                               f"where الرقم_التسلسلي = '{serial_num}'")
+                               f"where الرقم_التسلسلي = '{serial_num}' and الإسم_الثلاثي ='{fullname}'")
                 connection.commit()
                 flash('تم الحفظ بنجاح!', 'success')
             except Exception as e:
                 connection.rollback()
                 flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
                 print(e)
-                return False
+                raise e
         # condition of adding a new patient
         else:
             try:
@@ -90,7 +90,7 @@ def save_patient_func(form, update=False):
                 connection.rollback()
                 flash('حدث خطأ أثناء الحفظ! \n' + str(e), 'error')
                 print(e)
-                return False
+                raise e
     if update:
         return True, (fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer, city, phone, work, health, companion, description, diagnosis, therapy)
     return True
@@ -107,7 +107,12 @@ def add_patient():
 
 @app.route('/update-patient', methods=['POST'])
 def update_patient():
-    boolean, results = save_patient_func(request.form, True) # type: ignore - special case don't worry
+    result = save_patient_func(request.form, True)
+    if type(result) is tuple:
+        boolean, results = result
+    else:
+        boolean = result
+        results = []
     return render_template('show-search-results.html', fullname=results[0], id=results[1], serialYearNum=results[2],
                         serialNum=results[3], status=results[4], age=results[5], gender=results[6], children=results[7],
                         prayer=results[8], city=results[9], phone=results[10], work=results[11], health=results[12], companion=results[13],
@@ -261,7 +266,7 @@ def create_table():
     arabic_sql_create_table = """
     create table if not exists Patient(
         سنة_الرقم_التسلسلي nvarchar(4),
-        الرقم_التسلسلي nvarchar(20) primary key,
+        الرقم_التسلسلي nvarchar(20),
         الإسم_الثلاثي nvarchar(45),
         الإسم_الشخصي nvarchar(15),
         إسم_الأب nvarchar(15),
@@ -295,6 +300,17 @@ def create_table():
 
 
 if __name__ == "__main__":
+    # with sqlite3.connect("Patient.db") as data_connection:
+    #     data_cursor = data_connection.cursor()
+    #     data_cursor.execute("select * from Patient")
+    #     all_data = data_cursor.fetchall()
+    #     data_connection.commit()
+    #     with sqlite3.connect("علاج.db") as empty_connection:
+    #         empty_cursor = empty_connection.cursor()
+    #         for data in all_data:
+    #             empty_cursor.execute("insert into Patient values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    #                                 data)
+
     if not os.path.exists("علاج.db"):
         create_table()
     webbrowser.open("http://127.0.0.1:5000")

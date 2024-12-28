@@ -1,0 +1,85 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/app.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": true
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/static;static/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/templates;templates/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/client_secrets.json;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/Constants.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/GDriveConnect.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/\u0639\u0644\u0627\u062c.db;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/m7mdg/D/PersonalCodingProjects/PatientsData-FlaskVersion/\u0646\u0633\u062e_\u0625\u062d\u062a\u064a\u0627\u0637\u064a.csv;."
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}
