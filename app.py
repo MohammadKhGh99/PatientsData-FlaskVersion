@@ -300,18 +300,19 @@ def create_table():
 
 
 if __name__ == "__main__":
-    # with sqlite3.connect("Patient.db") as data_connection:
-    #     data_cursor = data_connection.cursor()
-    #     data_cursor.execute("select * from Patient")
-    #     all_data = data_cursor.fetchall()
-    #     data_connection.commit()
-    #     with sqlite3.connect("علاج.db") as empty_connection:
-    #         empty_cursor = empty_connection.cursor()
-    #         for data in all_data:
-    #             empty_cursor.execute("insert into Patient values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    #                                 data)
+    with sqlite3.connect("Patient.db") as data_connection:
+        data_cursor = data_connection.cursor()
+        data_cursor.execute("select * from Patient")
+        all_data = data_cursor.fetchall()
+        data_connection.commit()
+        with sqlite3.connect("علاج.db") as empty_connection:
+            create_table()
+            empty_cursor = empty_connection.cursor()
+            for data in all_data:
+                empty_cursor.execute("insert into Patient values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                    data)
 
-    if not os.path.exists("علاج.db"):
-        create_table()
-    webbrowser.open("http://127.0.0.1:5000")
-    app.run(debug=False)
+    # if not os.path.exists("علاج.db"):
+    #     create_table()
+    # webbrowser.open("http://127.0.0.1:5000")
+    # app.run(debug=False)
