@@ -34,7 +34,7 @@ ID_WDG_X = 825
 # DONE_Y = 380
 
 SERIAL = ":الرقم التسلسلي"
-SERIAL_YEAR = "سنة الرقم التسلسلي"
+YEAR = "السنة"
 SERIAL_Y = 160
 SERIAL_YEAR_LBL_X = 180
 SERIAL_YEAR_WDG_X = 175
@@ -56,7 +56,7 @@ DIAGNOSIS_Y = 370
 THERAPY = ":العلاج"
 THERAPY_Y = 435
 
-STATUS = ":الحالة"
+STATUS = ":الحالة_الإجتماعية"
 SOCIALS = ["أعزب", "متزوج", "مطلّق", "أرمل"]
 SOCIAL_Y = 160
 SOCIAL_LBL_X = 520
@@ -117,7 +117,7 @@ SUBJECT = "بطاقة علاج"
 #
 # THERAPYS = [THERAPY[1:] + f" {THERAPYS_NUMS[i]}" for i in range(8)]
 
-ALL_DATA = [ALL_NAME, ID[1:], GENDER[1:], STATUS[1:], AGE[1:], SERIAL[1:], SERIAL_YEAR, CHILDREN[1:], PRAYER[1:], HEALTH[1:], WORK[1:],
+ALL_DATA = [SERIAL[1:], YEAR, ALL_NAME, ID[1:], GENDER[1:], STATUS[1:], AGE[1:],  CHILDREN[1:], PRAYER[1:], HEALTH[1:], WORK[1:],
             COMPANION[1:], CITY[1:], PHONE[1:], DESCRIPTION[1:], DIAGNOSIS[1:], THERAPY[1:]]
 
 NAME_SEARCH = FNAME[1:]

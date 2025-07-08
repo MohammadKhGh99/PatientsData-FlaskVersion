@@ -32,14 +32,9 @@ def do_backup_xlsx():
                 writer.writerow(column_names)  # Write column headers
                 writer.writerows(rows)  # Write data rows
 
+                # writer.writerow(column_names[::-1])  # Write column headers
+                # writer.writerows([row[::-1] for row in rows])  # Write data rows
 
-
-            # df = pd.read_sql("SELECT * from Patient", connection)
-            # # Check if the file exists
-            # if os.path.exists("نسخ_إحتياطي.xlsx"):
-            #     # Remove the file
-            #     os.remove("نسخ_إحتياطي.xlsx")
-            # df.to_excel("نسخ_إحتياطي.xlsx")
         flash("تم التحويل بنجاح!", "success")
         return 0
     except Exception as e:

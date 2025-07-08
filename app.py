@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import signal
 import sqlite3
@@ -19,7 +20,8 @@ def home():
 def save_patient_func(form, update=False):
     fullname = form['fullname'].strip()
     id_number = form['id'].strip()
-    serial_year_num = form['serialYearNum'].strip()
+    year_num = form['year'].strip()
+    print(year_num)
     serial_num = form['serialNum'].strip()
     status = form['status'].strip()
     age = form['age'].strip()
@@ -47,8 +49,8 @@ def save_patient_func(form, update=False):
         if update:
             try:
                 cursor.execute(f"update Patient "
-                               f"set سنة_الرقم_التسلسلي = '{serial_year_num}',"
-                               f"الرقم_التسلسلي = '{serial_num}',"
+                            #    f"set الرقم_التسلسلي = '{serial_num}',"
+                               f"set السنة = '{year_num}',"
                                f"الإسم_الثلاثي = '{fullname}',"
                                f"الإسم_الشخصي = '{first}',"
                                f" إسم_الأب = '{middle}',"
@@ -67,7 +69,7 @@ def save_patient_func(form, update=False):
                                f" وصف_الحالة = '{description}', "
                                f"التشخيص = '{diagnosis}',"
                                f" العلاج = '{therapy}' "
-                               f"where الرقم_التسلسلي = '{serial_num}' and الإسم_الثلاثي ='{fullname}'")
+                               f"where الرقم_التسلسلي = '{serial_num}'") # and الإسم_الثلاثي ='{fullname}'")
                 connection.commit()
                 flash('تم الحفظ بنجاح!', 'success')
             except Exception as e:
@@ -80,10 +82,13 @@ def save_patient_func(form, update=False):
             try:
                 cursor.execute(
                     "INSERT INTO Patient "
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (serial_year_num, serial_num, fullname, first, middle, last,
-                     id_number, gender, status, age, children, prayer, health,
-                     work, companion, city, phone, description, diagnosis, therapy))
+                    "(السنة, الإسم_الثلاثي, الإسم_الشخصي, إسم_الأب, إسم_العائلة, "
+                    "رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, أولاد, صلاة, صحة, "
+                    "العمل, المرافق, البلد, الهاتف, وصف_الحالة, التشخيص, العلاج) "
+                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (year_num, fullname, first, middle, last,
+                    id_number, gender, status, age, children, prayer, health,
+                    work, companion, city, phone, description, diagnosis, therapy))
                 connection.commit()
                 flash('تم الحفظ بنجاح!', 'success')
             except Exception as e:
@@ -92,7 +97,7 @@ def save_patient_func(form, update=False):
                 print(e)
                 raise e
     if update:
-        return True, (fullname, id_number, serial_year_num, serial_num, status, age, gender, children, prayer, city, phone, work, health, companion, description, diagnosis, therapy)
+        return True, (fullname, id_number, serial_num, year_num, status, age, gender, children, prayer, city, phone, work, health, companion, description, diagnosis, therapy)
     return True
 
 
@@ -102,7 +107,25 @@ def add_patient():
         save_patient_func(request.form)
         return redirect(url_for('add_patient'))
 
-    return render_template('add-patient.html')
+    with sqlite3.connect("علاج.db") as connection:
+        cursor = connection.cursor()
+        try:
+            cursor.execute("select max(الرقم_التسلسلي) from Patient")
+            max_serial_num = cursor.fetchone()[0]
+            if max_serial_num is None:
+                max_serial_num = 2
+            else:
+                max_serial_num += 1
+            connection.commit()
+        except Exception as e:
+            connection.rollback()
+            flash('حدث خطأ أثناء الحصول على الرقم التسلسلي! \n' + str(e), 'error')
+            print(e)
+            return render_template('add-patient.html')
+    
+    year_num = datetime.now().year
+
+    return render_template('add-patient.html', serial_num=max_serial_num, year_num=year_num)
 
 
 @app.route('/update-patient', methods=['POST'])
@@ -113,8 +136,8 @@ def update_patient():
     else:
         boolean = result
         results = []
-    return render_template('show-search-results.html', fullname=results[0], id=results[1], serialYearNum=results[2],
-                        serialNum=results[3], status=results[4], age=results[5], gender=results[6], children=results[7],
+    return render_template('show-search-results.html', fullname=results[0], id=results[1], serialNum=results[2],
+                        year=results[3], status=results[4], age=results[5], gender=results[6], children=results[7],
                         prayer=results[8], city=results[9], phone=results[10], work=results[11], health=results[12], companion=results[13],
                         description=results[14], diagnosis=results[15], therapy=results[16])
 
@@ -127,7 +150,7 @@ def search_patient():
             global data_dict
             data_dict = {}
             if status == 0:
-                data_dict = {f'{row[SERIAL[1:]]}: {row[ALL_NAME]} - {row[CITY[1:]]}': row for row in results}
+                data_dict = {f'{row[SERIAL[1:]]}-{row[YEAR]}: {row[ALL_NAME]} - {row[CITY[1:]]}': row for row in results}
             return render_template('search-results.html', data=data_dict.keys())
         else:
             flash("لم يتم إيجاد نتائج!", "error")
@@ -149,12 +172,12 @@ def show_search_results():
     if request.form['searchResults'] == "---":
         flash("لا يوجد نتيجة!", "error")
         return redirect(url_for("home"))
-    # if request.method == "POST":
+
     fullname = data_dict[request.form['searchResults']][ALL_NAME].strip()
     id_number = data_dict[request.form['searchResults']][ID[1:]].strip()
 
-    serial_year_num = data_dict[request.form['searchResults']]["سنة الرقم التسلسلي"].strip()
-    serial_num = data_dict[request.form['searchResults']]["الرقم التسلسلي"].strip()
+    year_num = data_dict[request.form['searchResults']]["السنة"]
+    serial_num = data_dict[request.form['searchResults']]["الرقم التسلسلي"]
     status = data_dict[request.form['searchResults']][STATUS[1:]].strip()
     age = data_dict[request.form['searchResults']][AGE[1:]].strip()
     gender = data_dict[request.form['searchResults']][GENDER[1:]].strip()
@@ -168,8 +191,8 @@ def show_search_results():
     description = data_dict[request.form['searchResults']][DESCRIPTION[1:]].strip()
     diagnosis = data_dict[request.form['searchResults']][DIAGNOSIS[1:]].strip()
     therapy = data_dict[request.form['searchResults']][THERAPY[1:]].strip()
-
-    return render_template('show-search-results.html', fullname=fullname, id=id_number, serialYearNum=serial_year_num,
+    print(year_num)
+    return render_template('show-search-results.html', fullname=fullname, id=id_number, year_num=year_num,
                            serialNum=serial_num, status=status, age=age, gender=gender, children=children,
                            prayer=prayer, city=city, phone=phone, work=work, health=health, companion=companion,
                            description=description, diagnosis=diagnosis, therapy=therapy)
@@ -185,8 +208,7 @@ def search_patient_func(search_method, search_for=None):
     with sqlite3.connect("علاج.db") as connection:
         cursor = connection.cursor()
 
-        wanted_cols = 'الإسم_الثلاثي, رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, الرقم_التسلسلي, ' \
-                      'سنة_الرقم_التسلسلي, أولاد, صلاة, صحة, العمل, المرافق, البلد, الهاتف, وصف_الحالة, التشخيص, العلاج'
+        wanted_cols = f"الرقم_التسلسلي, السنة, الإسم_الثلاثي, رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, أولاد, صلاة, صحة, العمل, المرافق, البلد, الهاتف, وصف_الحالة, التشخيص, العلاج"
 
         try:
             # taking all the patients
@@ -265,8 +287,8 @@ def shutdown():
 def create_table():
     arabic_sql_create_table = """
     create table if not exists Patient(
-        سنة_الرقم_التسلسلي nvarchar(4),
-        الرقم_التسلسلي nvarchar(20),
+        الرقم_التسلسلي INTEGER PRIMARY KEY AUTOINCREMENT,
+        السنة nvarchar(4),
         الإسم_الثلاثي nvarchar(45),
         الإسم_الشخصي nvarchar(15),
         إسم_الأب nvarchar(15),
@@ -282,9 +304,9 @@ def create_table():
         المرافق nvarchar(30),
         البلد nvarchar(20),
         الهاتف nvarchar(12),
-        وصف_الحالة nvarchar(200),
-        التشخيص nvarchar(100),
-        العلاج nvarchar(400)
+        وصف_الحالة nvarchar(500),
+        التشخيص nvarchar(500),
+        العلاج nvarchar(500)
     )
     """
 
@@ -293,28 +315,38 @@ def create_table():
         try:
             cursor.execute(arabic_sql_create_table)
             connection.commit()
+            # # Reset the auto-increment sequence to start from 1
+            cursor.execute("INSERT OR REPLACE INTO sqlite_sequence (name, seq) VALUES ('Patient', 1)")
+
+            # cursor.execute("DELETE FROM sqlite_sequence WHERE name='Patient'")
+            connection.commit()
         except Exception as e:
             flash(str(e), 'error')
             connection.rollback()
             print(e)
 
 
+def drop_table():
+    """Reset the auto-increment sequence to start from 1"""
+    with sqlite3.connect("علاج.db") as connection:
+        cursor = connection.cursor()
+        try:
+            # Reset the auto-increment sequence
+            # cursor.execute("DELETE FROM sqlite_sequence WHERE name='Patient'")
+            cursor.execute("DROP TABLE Patient")
+            connection.commit()
+            print("table Patient dropped successfully.")
+        except Exception as e:
+            connection.rollback()
+            print(f"Error dropping table Patient: {e}")
+
+
 if __name__ == "__main__":
-    # move data from one database to another
     
-    # with sqlite3.connect("Patient.db") as data_connection:
-    #     data_cursor = data_connection.cursor()
-    #     data_cursor.execute("select * from Patient")
-    #     all_data = data_cursor.fetchall()
-    #     data_connection.commit()
-    #     with sqlite3.connect("علاج.db") as empty_connection:
-    #         create_table()
-    #         empty_cursor = empty_connection.cursor()
-    #         for data in all_data:
-    #             empty_cursor.execute("insert into Patient values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-    #                                 data)
+    # drop_table()
+    # create_table()
 
     if not os.path.exists("علاج.db"):
         create_table()
     webbrowser.open("http://127.0.0.1:5000")
-    app.run(debug=False)
+    app.run(debug=True)
