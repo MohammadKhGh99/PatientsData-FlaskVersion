@@ -125,7 +125,7 @@ def load_func():
 
         root_list = drive.ListFile({'q': f"'{root_folder['id']}' in parents and trashed=false"}).GetList() # type: ignore
         for file in root_list:
-            file.GetContentFile(fr"نسخ_إحتياطي\{file['title']}")
+            file.GetContentFile(fr"{file['title']}")
         flash("تم إستعادة الملفات بنجاح!", "success")
         return 0
     except Exception as e:
