@@ -229,15 +229,15 @@ def search_patient_func(search_method, search_for=None):
                     elif search_method == FLNAME:
                         cur = search_for.split(" ")
                         cursor.execute(
-                            f"select {wanted_cols} from Patient where الإسم_الشخصي = '{cur[0]}' and إسم_العائلة = '{cur[1]}'")
+                            f"select {wanted_cols} from Patient where الإسم_الشخصي like ? and إسم_العائلة like ?", (f"{cur[0]}%", f"%{cur[1]}"))
                     elif search_method == FMNAME:
                         cur = search_for.split(" ")
                         cursor.execute(
-                            f"select {wanted_cols} from Patient where الإسم_الشخصي = '{cur[0]}' and إسم_الأب = '{cur[1]}'")
+                            f"select {wanted_cols} from Patient where الإسم_الشخصي like ? and إسم_الأب like ?", (f"{cur[0]}%", f"%{cur[1]}%"))
                     elif search_method == FNAME:
-                        cursor.execute(f"select {wanted_cols} from Patient where الإسم_الشخصي = '{search_for}'")
+                        cursor.execute(f"select {wanted_cols} from Patient where الإسم_الشخصي like ?", (f"{search_for}%"))
                     elif search_method == LNAME:
-                        cursor.execute(f"select {wanted_cols} from Patient where إسم_العائلة = '{search_for}'")
+                        cursor.execute(f"select {wanted_cols} from Patient where إسم_العائلة like ?", (f"%{search_for}"))
                 data = cursor.fetchall()
                 connection.commit()
                 for j in range(len(data)):

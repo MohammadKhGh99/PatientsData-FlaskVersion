@@ -4,6 +4,10 @@
   font-size: 20px;
 }
 
+input, textarea, select {
+  border-radius: 10px;
+}
+
 .button {
   /*background-color: #4CAF50; !* Set the background color *!*/
   border: none; /* Remove the border */
