@@ -19,3 +19,4 @@ install.bat
 install.txt
 conversion-config.json
 .env
+last_backup_time.txt
