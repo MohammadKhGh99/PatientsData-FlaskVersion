@@ -6,39 +6,9 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1 class="title" style="font-size: 30px">بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم</h1>
-  <h2 class="title">بطاقة علاج</h2>
+  {% extends "base.html" %}
 
-  <form action="shutdown" method="post">
-    <input type="submit" value="إغلاق" class="button" style="width: 70px; background-color: red">
-  </form>
-  <br>
-
-  <a href="{{url_for('home')}}">
-    <button id="back-to-main-menu" class="button" style="font-size: 16px">العودة إلى القائمة الرئيسية</button>
-  </a>
-  <br><br>
-
-  <button class="button" onclick="goBack()" style="font-size: 16px; width: 130px">العودة إلى الوراء</button>
-
-  <script>
-    function goBack() {
-      window.history.back();
-    }
-  </script>
-  <br><br>
-
-  {% for message in get_flashed_messages(category_filter=["success"]) %}
-    <div role="alert" style="color: lawngreen">
-      <h2>{{ message }}</h2>
-    </div>
-  {% endfor %}
-
-  {% for message in get_flashed_messages(category_filter=["error"]) %}
-    <div role="alert" style="color: red">
-      <h2>{{ message }}</h2>
-    </div>
-  {% endfor %}
+  {% block container %}
 
   <form id="add-patient-page" class="form" name="add-patient-page" action="add-patient" method="post">
     <b><label class="labels" for="serialNum">الرقم التسلسلي:</label></b>
@@ -53,13 +23,13 @@
     <input id="fullname" class="txt-input" name="fullname" type="text" style="width: 150px;" required>&ensp; -->
 
     <label class="labels" for="firstname">الإسم الشخصي:</label>
-    <input id="firstname" class="txt-input" name="firstname" type="text" style="width: 150px;" required>&ensp;
+    <input id="firstname" class="txt-input" name="firstname" type="text" style="width: 120px;" required>&ensp;
 
     <label class="labels" for="middlename">إسم الأب:</label>
-    <input id="middlename" class="txt-input" name="middlename" type="text" style="width: 150px;" required>&ensp;
+    <input id="middlename" class="txt-input" name="middlename" type="text" style="width: 120px;">&ensp;
 
     <label class="labels" for="lastname">إسم العائلة:</label>
-    <input id="lastname" class="txt-input" name="lastname" type="text" style="width: 150px;" required>&ensp;
+    <input id="lastname" class="txt-input" name="lastname" type="text" style="width: 120px;">&ensp;
 
     <label class="labels" for="id">رقم الهوية:</label>
     <input id="id" class="txt-input" name="id" type="text" style="width: 110px">&ensp;
@@ -75,14 +45,14 @@
     </select>&ensp;
 
     <label class="labels" for="children">أولاد:</label>
-    <input id="children" class="txt-input" name="children" type="number" style="width: 40px">&ensp;<br><br>
+    <input id="children" class="txt-input" name="children" type="number" style="width: 40px">&ensp;
 
     <label class="labels" for="prayer">صلاة:</label>
     <select class="txt-input" id="prayer" name="prayer" style="width: 50px;">
         <option value="">---</option>
         <option value="نعم">نعم</option>
         <option value="لا">لا</option>
-    </select>&ensp;
+    </select>&ensp;<br><br>
 
     <label class="labels" for="status">الحالة الإجتماعية:</label>
     <select id="status" class="txt-input" name="status" style="width: 120px;">
@@ -133,6 +103,6 @@
     <input id="reset" class="button" type="reset" value="تجاهل" style="color: red">
     <br>
   </form>
-
+  {% endblock %}
 </body>
 </html>

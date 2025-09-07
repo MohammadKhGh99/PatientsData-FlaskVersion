@@ -6,27 +6,9 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1 class="title" style=" font-size: 30px">بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم</h1>
-  <h2 class="title">بطاقة علاج</h2>
+  {% extends "base.html" %}
 
-  <form action="shutdown" method="post">
-    <input type="submit" value="إغلاق" class="button" style="width: 70px; background-color: red">
-  </form>
-  <br>
-
-  <a href="{{url_for('home')}}">
-    <button id="back-to-main-menu" class="button" style="font-size: 16px">العودة إلى القائمة الرئيسية</button>
-  </a>
-  <br><br>
-
-  <button class="button" onclick="goBack()" style="font-size: 16px; width: 130px">العودة إلى الوراء</button>
-
-  <script>
-    function goBack() {
-      window.history.back();
-    }
-  </script>
-  <br><br>
+  {% block container %}
 
   {% for message in get_flashed_messages(category_filter=["success"]) %}
     <div role="alert">
@@ -130,6 +112,6 @@
     <input id="reset" class="button" type="reset" value="تجاهل" style="color: red">
     <br>
   </form>
-
+  {% endblock %}
 </body>
 </html>

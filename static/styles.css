@@ -50,7 +50,7 @@ input, select, textarea {
   border-radius: 5px; /* Apply rounded corners */
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); /* Add box shadow */
   height: 30px;
-  width: 150px;
+  width: 180px;
 }
 
 /* Change button color when hovered */

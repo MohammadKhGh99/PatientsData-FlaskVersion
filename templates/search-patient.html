@@ -6,44 +6,26 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <h1 class="title" style="font-size: 30px">بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم</h1>
-  <h2 class="title">بطاقة علاج</h2>
+  {% extends "base.html" %}
 
-  <form action="shutdown" method="post">
-    <input type="submit" value="إغلاق" class="button" style="width: 70px; background-color: red">
-  </form>
-  <br>
-
-  <a href="{{url_for('home')}}">
-    <button id="back-to-main-menu" class="button" style="font-size: 16px">العودة إلى القائمة الرئيسية</button>
-  </a>
-  <br><br>
-
-  <button class="button" onclick="goBack()" style="font-size: 16px; width: 130px">العودة إلى الوراء</button>
-
-  <script>
-    function goBack() {
-      window.history.back();
-    }
-  </script>
-  <br><br>
+  {% block container %}
 
   <form id="search-page" class="form" method="POST" action="search-patient">
-    &ensp;&ensp;<span class="labels">البحث عن:</span><br><br>
+    <span class="labels" style="margin-right: 15px;">البحث عن:</span><br><br>
 
-    &ensp;&ensp;<label class="labels" for="search" id="search-label">الإسم الشخصي</label>
-    &ensp;&ensp;<input id="search" name="search" type="search" class="txt-input" id="search-input">&ensp;&ensp;
+    <label class="labels" for="search" id="search-label" style="margin-right: 15px;">الإسم الشخصي:</label>
+    <input id="search" name="search" type="search" class="txt-input" style="margin-right: 17px; margin-left: 15px;" required>
     <div id="second-search" style="display: none;">
       <br><br>
-      &ensp;&ensp;<label class="labels" for="search1" id="search-label1">إسم العائلة</label>&ensp;&ensp;&ensp;&ensp;&ensp;
-      &ensp;&ensp;<input id="search1" name="search1" type="search" class="txt-input" id="search-input1">&ensp;&ensp;
+      <label class="labels" for="search1" id="search-label1" style="margin-right: 15px;">إسم العائلة:</label>
+      <input id="search1" name="search1" type="search" class="txt-input" style="margin-right: 55px; margin-left: 15px;">
     </div>
 
     <input type="submit" class="button" value="البحث" style="width: 60px">
     <br><br>
 
-    &ensp;&ensp;<label class="labels" for="searchMethod">طريقة البحث:</label>
-    <select id="searchMethod" name="searchMethod" class="txt-input" onchange="updateSearchLabel()">
+    <label class="labels" for="searchMethod" style="margin-right: 15px; margin-left: 15px;">طريقة البحث:</label>
+    <select id="searchMethod" name="searchMethod" class="txt-input" onchange="updateSearchLabel()"  style="margin-right: 15px;">
         <option value="الإسم الشخصي">الإسم الشخصي</option>
         <option value="الإسم الشخصي واسم الأب">الإسم الشخصي واسم الأب</option>
         <option value="الإسم الشخصي واسم العائلة">الإسم الشخصي واسم العائلة</option>
@@ -53,11 +35,24 @@
     </select>&ensp;&ensp;
     <script>
       function updateSearchLabel() {
+        document.getElementById("search").value = ""; // clear the second input field
+        document.getElementById("search1").value = ""; // clear the second input field
+
         var methodValue = document.getElementById("searchMethod").value;
         if (methodValue == "الإسم الشخصي" || methodValue == "إسم العائلة" || methodValue == "الإسم الثلاثي" || methodValue == "رقم الهوية") {
           document.getElementById("search-label").innerText = methodValue + ":";
           document.getElementById("second-search").style.display = "none";
+          document.getElementById("search").style.marginRight = "17px";
+          if (methodValue == "الإسم الشخصي") {
+            document.getElementById("search").style.marginRight = "17px";
+          } else if (methodValue == "إسم العائلة" || methodValue == "رقم الهوية") {
+            document.getElementById("search").style.marginRight = "46px";
+          } else {
+            document.getElementById("search").style.marginRight = "32px";
+          }
         } else {
+          document.getElementById("search").style.marginRight = "17px";
+          document.getElementById("search1").style.marginRight = (methodValue == "الإسم الشخصي واسم الأب") ? "55px" : "47px";
           document.getElementById("second-search").style.display = "inline";
           var methodSplit = methodValue.split(" و");
           var firstSearchTerm = methodSplit[0];
@@ -66,11 +61,13 @@
           var secondSearchTerm = methodSplit[1];
           document.getElementById("search-label1").innerText = secondSearchTerm + ":";
         }
+        // add required to the input 
+        document.getElementById("search1").required = true;
       }
       
     </script>
     <br><br>
   </form>
-
+  {% endblock %}
 </body>
 </html>

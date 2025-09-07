@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title style="font-family:Traditional Arabic;">المعالجة بالرقية الشرعية</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+
+<!-- <style>
+        body {
+      background: url("{{ url_for('static', filename='is-bg.jpg') }}") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+</style> -->
+
+<body>
+  <h1 class="title" style="font-size: 30px">بِسْمِ اللهِ الرَّحْمنِ الرَّحِيم</h1>
+  <h2 class="title">بطاقة علاج</h2>
+  
+  <header style="display: flex; justify-content: space-between;">
+    <form action="shutdown" method="post">
+      <!-- <input type="submit" value="إغلاق" class="button" style="width: 70px; background-color: red"> -->
+      <button type="submit" class="button" style="width: 80px; background-color: red; font-size: 16px">إغلاق <span class="material-symbols-outlined" style="font-size: 16px;">
+          mode_off_on
+      </span></button>
+    </form>
+
+    {% block navigation %}
+    <a href="{{url_for('home')}}">
+      <button id="back-to-main-menu" class="button" style="font-size: 16px">القائمة الرئيسية <span class="material-symbols-outlined" style="font-size: 16px;">
+        home
+      </span></button>
+    </a>
+    
+    <button class="button" onclick="goBack()" style="font-size: 16px; width: 130px">للوراء <span class="material-symbols-outlined" style="font-size: 16px;">
+      arrow_back
+    </span></button>
+  
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+    {% endblock %}
+
+    <span style="font-size: 20px; margin-left: 250px">
+        وقت آخر نسخة احتياطية:
+        <span style="color: green">
+          {{last_backup_time}}
+        </span>
+    </span>
+
+  </header>
+  
+
+  {% for message in get_flashed_messages(category_filter=["success"]) %}
+    <div role="alert" style="color: lawngreen">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
+
+  {% for message in get_flashed_messages(category_filter=["error"]) %}
+    <div role="alert" style="color: red">
+      <h2>{{ message }}</h2>
+    </div>
+  {% endfor %}
+
+  <br><br>
+
+  {% block container %}
+  {% endblock %}
+
+  </body>
+</html>
