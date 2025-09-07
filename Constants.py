@@ -2,6 +2,8 @@ FNAME = "الإسم الشخصي"
 FNAME_Y = 150
 NAME_Y = 160
 
+MNAME = "إسم الأب"
+
 FMNAME = "الإسم الشخصي واسم الأب"
 FMNAME_Y = 175
 
@@ -117,8 +119,9 @@ SUBJECT = "بطاقة علاج"
 #
 # THERAPYS = [THERAPY[1:] + f" {THERAPYS_NUMS[i]}" for i in range(8)]
 
-ALL_DATA = [SERIAL[1:], YEAR, ALL_NAME, ID[1:], GENDER[1:], STATUS[1:], AGE[1:],  CHILDREN[1:], PRAYER[1:], HEALTH[1:], WORK[1:],
-            COMPANION[1:], CITY[1:], PHONE[1:], DESCRIPTION[1:], DIAGNOSIS[1:], THERAPY[1:]]
+ALL_DATA = [SERIAL[1:], YEAR, ALL_NAME, FNAME, MNAME, LNAME, ID[1:], GENDER[1:], STATUS[1:], 
+            AGE[1:],  CHILDREN[1:], PRAYER[1:], HEALTH[1:], WORK[1:], COMPANION[1:], CITY[1:], 
+            PHONE[1:], DESCRIPTION[1:], DIAGNOSIS[1:], THERAPY[1:]]
 
 NAME_SEARCH = FNAME[1:]
 NAME_SEARCH_X = WIDGETS_X - 450

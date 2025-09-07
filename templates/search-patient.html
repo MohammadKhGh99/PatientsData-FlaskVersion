@@ -29,15 +29,21 @@
   <br><br>
 
   <form id="search-page" class="form" method="POST" action="search-patient">
-    &ensp;&ensp;<label class="labels" for="search">البحث عن:</label>
-    &ensp;&ensp;<input id="search" name="search" type="search" class="txt-input">&ensp;&ensp;
+    &ensp;&ensp;<span class="labels">البحث عن:</span><br><br>
 
+    &ensp;&ensp;<label class="labels" for="search" id="search-label">الإسم الشخصي</label>
+    &ensp;&ensp;<input id="search" name="search" type="search" class="txt-input" id="search-input">&ensp;&ensp;
+    <div id="second-search" style="display: none;">
+      <br><br>
+      &ensp;&ensp;<label class="labels" for="search1" id="search-label1">إسم العائلة</label>&ensp;&ensp;&ensp;&ensp;&ensp;
+      &ensp;&ensp;<input id="search1" name="search1" type="search" class="txt-input" id="search-input1">&ensp;&ensp;
+    </div>
 
     <input type="submit" class="button" value="البحث" style="width: 60px">
     <br><br>
 
     &ensp;&ensp;<label class="labels" for="searchMethod">طريقة البحث:</label>
-    <select id="searchMethod" name="searchMethod" class="txt-input">
+    <select id="searchMethod" name="searchMethod" class="txt-input" onchange="updateSearchLabel()">
         <option value="الإسم الشخصي">الإسم الشخصي</option>
         <option value="الإسم الشخصي واسم الأب">الإسم الشخصي واسم الأب</option>
         <option value="الإسم الشخصي واسم العائلة">الإسم الشخصي واسم العائلة</option>
@@ -45,6 +51,24 @@
         <option value="الإسم الثلاثي">الإسم الثلاثي</option>
         <option value="رقم الهوية">رقم الهوية</option>
     </select>&ensp;&ensp;
+    <script>
+      function updateSearchLabel() {
+        var methodValue = document.getElementById("searchMethod").value;
+        if (methodValue == "الإسم الشخصي" || methodValue == "إسم العائلة" || methodValue == "الإسم الثلاثي" || methodValue == "رقم الهوية") {
+          document.getElementById("search-label").innerText = methodValue + ":";
+          document.getElementById("second-search").style.display = "none";
+        } else {
+          document.getElementById("second-search").style.display = "inline";
+          var methodSplit = methodValue.split(" و");
+          var firstSearchTerm = methodSplit[0];
+          document.getElementById("search-label").innerText = firstSearchTerm + ":";
+
+          var secondSearchTerm = methodSplit[1];
+          document.getElementById("search-label1").innerText = secondSearchTerm + ":";
+        }
+      }
+      
+    </script>
     <br><br>
   </form>
 

@@ -24,6 +24,10 @@ input, textarea, select {
   width: 180px;
 }
 
+input, select, textarea {
+  border-radius: 10px;
+}
+
 /* Change button color when hovered */
 .button:hover {
   background-color: #45a049;

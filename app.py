@@ -18,7 +18,10 @@ def home():
 
 
 def save_patient_func(form, update=False):
-    fullname = form['fullname'].strip()
+    # fullname = form['fullname'].strip()
+    firstname = form['firstname'].strip()
+    middlename = form['middlename'].strip()
+    lastname = form['lastname'].strip()
     id_number = form['id'].strip()
     year_num = form['year'].strip()
     print(year_num)
@@ -40,21 +43,22 @@ def save_patient_func(form, update=False):
     with sqlite3.connect("علاج.db") as connection:
         cursor = connection.cursor()
         # condition of updating a patient
-        splitted_name = fullname.split(' ')
-        if len(splitted_name) == 3:
-            first, middle, last = splitted_name
-        else:
-            first, last = splitted_name
-            middle = ""
+        # splitted_name = fullname.split(' ')
+        # if len(splitted_name) == 3:
+        #     first, middle, last = splitted_name
+        # else:
+        #     first, last = splitted_name
+        #     middle = ""
+        fullname = f"{firstname} {middlename} {lastname}"
         if update:
             try:
                 cursor.execute(f"update Patient "
                             #    f"set الرقم_التسلسلي = '{serial_num}',"
                                f"set السنة = '{year_num}',"
                                f"الإسم_الثلاثي = '{fullname}',"
-                               f"الإسم_الشخصي = '{first}',"
-                               f" إسم_الأب = '{middle}',"
-                               f" إسم_العائلة = '{last}', "
+                               f"الإسم_الشخصي = '{firstname}',"
+                               f" إسم_الأب = '{middlename}',"
+                               f" إسم_العائلة = '{lastname}', "
                                f"رقم_الهوية = '{id_number}',"
                                f" الجنس = '{gender}', "
                                f"الحالة_الإجتماعية = '{status}',"
@@ -86,7 +90,7 @@ def save_patient_func(form, update=False):
                     "رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, أولاد, صلاة, صحة, "
                     "العمل, المرافق, البلد, الهاتف, وصف_الحالة, التشخيص, العلاج) "
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (year_num, fullname, first, middle, last,
+                    (year_num, fullname, firstname, middlename, lastname,
                     id_number, gender, status, age, children, prayer, health,
                     work, companion, city, phone, description, diagnosis, therapy))
                 connection.commit()
@@ -97,7 +101,7 @@ def save_patient_func(form, update=False):
                 print(e)
                 raise e
     if update:
-        return True, (fullname, id_number, serial_num, year_num, status, age, gender, children, prayer, city, phone, work, health, companion, description, diagnosis, therapy)
+        return True, (firstname, middlename, lastname, id_number, serial_num, year_num, status, age, gender, children, prayer, city, phone, work, health, companion, description, diagnosis, therapy)
     return True
 
 
@@ -136,16 +140,16 @@ def update_patient():
     else:
         boolean = result
         results = []
-    return render_template('show-search-results.html', fullname=results[0], id=results[1], serialNum=results[2],
-                        year=results[3], status=results[4], age=results[5], gender=results[6], children=results[7],
-                        prayer=results[8], city=results[9], phone=results[10], work=results[11], health=results[12], companion=results[13],
-                        description=results[14], diagnosis=results[15], therapy=results[16])
+    return render_template('show-search-results.html', firstname=results[0], middlename=results[1], lastname=results[2], id=results[3], serialNum=results[4],
+                        year=results[5], status=results[6], age=results[7], gender=results[8], children=results[9],
+                        prayer=results[10], city=results[11], phone=results[12], work=results[13], health=results[14], companion=results[15],
+                        description=results[16], diagnosis=results[17], therapy=results[18])
 
 
 @app.route('/search-patient', methods=['GET', 'POST'])
 def search_patient():
     if request.method == 'POST':
-        status, results = search_patient_func(request.form['searchMethod'], request.form['search'])
+        status, results = search_patient_func(request.form['searchMethod'], request.form['search'], request.form['search1'])
         if type(results) is list and len(results) > 0:
             global data_dict
             data_dict = {}
@@ -173,7 +177,11 @@ def show_search_results():
         flash("لا يوجد نتيجة!", "error")
         return redirect(url_for("home"))
 
-    fullname = data_dict[request.form['searchResults']][ALL_NAME].strip()
+    # fullname = data_dict[request.form['searchResults']][ALL_NAME].strip()
+    print(data_dict[request.form['searchResults']].keys())
+    firstname = data_dict[request.form['searchResults']][FNAME].strip()
+    middlename = data_dict[request.form['searchResults']][MNAME].strip()
+    lastname = data_dict[request.form['searchResults']][LNAME].strip()
     id_number = data_dict[request.form['searchResults']][ID[1:]].strip()
 
     year_num = data_dict[request.form['searchResults']]["السنة"]
@@ -191,11 +199,11 @@ def show_search_results():
     description = data_dict[request.form['searchResults']][DESCRIPTION[1:]].strip()
     diagnosis = data_dict[request.form['searchResults']][DIAGNOSIS[1:]].strip()
     therapy = data_dict[request.form['searchResults']][THERAPY[1:]].strip()
-    print(year_num)
-    return render_template('show-search-results.html', fullname=fullname, id=id_number, year_num=year_num,
-                           serialNum=serial_num, status=status, age=age, gender=gender, children=children,
-                           prayer=prayer, city=city, phone=phone, work=work, health=health, companion=companion,
-                           description=description, diagnosis=diagnosis, therapy=therapy)
+
+    return render_template('show-search-results.html', firstname=firstname, middlename=middlename, lastname=lastname,
+                           id=id_number, year_num=year_num, serialNum=serial_num, status=status, age=age,
+                           gender=gender, children=children, prayer=prayer, city=city, phone=phone, work=work,
+                           health=health, companion=companion, description=description, diagnosis=diagnosis, therapy=therapy)
 
 
 @app.errorhandler(404)
@@ -203,16 +211,16 @@ def page_not_found(error):
     return render_template('page_not_found.html'), 404
 
 
-def search_patient_func(search_method, search_for=None):
+def search_patient_func(search_method, search=None, search1=None):
     to_return = []
     with sqlite3.connect("علاج.db") as connection:
         cursor = connection.cursor()
 
-        wanted_cols = f"الرقم_التسلسلي, السنة, الإسم_الثلاثي, رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, أولاد, صلاة, صحة, العمل, المرافق, البلد, الهاتف, وصف_الحالة, التشخيص, العلاج"
+        wanted_cols = f"الرقم_التسلسلي, السنة, الإسم_الثلاثي, الإسم_الشخصي, إسم_الأب, إسم_العائلة, رقم_الهوية, الجنس, الحالة_الإجتماعية, العمر, أولاد, صلاة, صحة, العمل, المرافق, البلد, الهاتف, وصف_الحالة, التشخيص, العلاج"
 
         try:
             # taking all the patients
-            if search_for is None or search_for.strip() == "":  # and (id_number is None or id_number.strip() == ""):
+            if search is None or search.strip() == "":
                 cursor.execute(f"select {wanted_cols} from Patient")
                 data = cursor.fetchall()
                 connection.commit()
@@ -222,22 +230,22 @@ def search_patient_func(search_method, search_for=None):
             else:
                 if search_method == ID_SEARCH:
                     cursor.execute(
-                        f"select {wanted_cols} from Patient where cast(رقم_الهوية as varchar(9)) = '{search_for}'")
+                        f"select {wanted_cols} from Patient where cast(رقم_الهوية as varchar(9)) = '{search}'")
                 else:
                     if search_method == ALL_NAME:
-                        cursor.execute(f"select {wanted_cols} from Patient where الإسم_الثلاثي = '{search_for}'")
+                        cursor.execute(f"select {wanted_cols} from Patient where الإسم_الثلاثي = '{search}'")
                     elif search_method == FLNAME:
-                        cur = search_for.split(" ")
+                        cur = search.split(" ")
                         cursor.execute(
-                            f"select {wanted_cols} from Patient where الإسم_الشخصي like ? and إسم_العائلة like ?", (f"{cur[0]}%", f"%{cur[1]}"))
+                            f"select {wanted_cols} from Patient where الإسم_الشخصي = '{search}' and إسم_العائلة = '{search1}'")
                     elif search_method == FMNAME:
-                        cur = search_for.split(" ")
+                        cur = search.split(" ")
                         cursor.execute(
-                            f"select {wanted_cols} from Patient where الإسم_الشخصي like ? and إسم_الأب like ?", (f"{cur[0]}%", f"%{cur[1]}%"))
+                            f"select {wanted_cols} from Patient where الإسم_الشخصي = '{search}' and إسم_الأب = '{search1}'")
                     elif search_method == FNAME:
-                        cursor.execute(f"select {wanted_cols} from Patient where الإسم_الشخصي like ?", (f"{search_for}%"))
+                        cursor.execute(f"select {wanted_cols} from Patient where الإسم_الشخصي = '{search}'")
                     elif search_method == LNAME:
-                        cursor.execute(f"select {wanted_cols} from Patient where إسم_العائلة like ?", (f"%{search_for}"))
+                        cursor.execute(f"select {wanted_cols} from Patient where إسم_العائلة = '{search}'")
                 data = cursor.fetchall()
                 connection.commit()
                 for j in range(len(data)):

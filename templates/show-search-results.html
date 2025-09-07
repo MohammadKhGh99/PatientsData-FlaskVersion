@@ -35,9 +35,26 @@
   {% endfor %}
 
   <form id="show-search-results-page" class="form" name="show-search-results-page" action="update-patient" method="POST">
+    <b><label class="labels" for="serialNum">الرقم التسلسلي:</label></b>
+    &ensp;<input id="serialNum" class="txt-input" name="serialNum" value="{{serialNum}}" readonly type="number" style="width: 100px">&ensp;
+    <label class="labels" for="year">السنة:</label>
+    <input id="year" class="txt-input" name="year" value="{{year_num}}" readonly type="number" style="width: 100px">&ensp;
+
+    <br><br>
+
+
     <br>
-    <label class="labels" for="fullname">الإسم الثلاثي:</label>
-    <input class="txt-input" id="fullname" name="fullname" value="{{fullname}}" type="text" style="width: 150px;" required>&ensp;
+    <!-- <label class="labels" for="fullname">الإسم الثلاثي:</label>
+    <input class="txt-input" id="fullname" name="fullname" value="{{fullname}}" type="text" style="width: 150px;" required>&ensp; -->
+
+    <label class="labels" for="firstname">الإسم الشخصي:</label>
+    <input id="firstname" class="txt-input" name="firstname" value="{{firstname}}" type="text" style="width: 150px;" required>&ensp;
+
+    <label class="labels" for="middlename">إسم الأب:</label>
+    <input id="middlename" class="txt-input" name="middlename" value="{{middlename}}" type="text" style="width: 150px;" required>&ensp;
+
+    <label class="labels" for="lastname">إسم العائلة:</label>
+    <input id="lastname" class="txt-input" name="lastname" value="{{lastname}}" type="text" style="width: 150px;" required>&ensp;
 
     <label class="labels" for="id">رقم الهوية:</label>
     <input class="txt-input" id="id" name="id" value="{{id}}" type="text" style="width: 110px">&ensp;
@@ -54,7 +71,7 @@
     </select>&ensp;
 
     &ensp;<label class="labels" for="children">أولاد:</label>
-    <input class="txt-input" id="children" name="children" value="{{children}}" type="number" style="width: 40px">&ensp;
+    <input class="txt-input" id="children" name="children" value="{{children}}" type="number" style="width: 40px">&ensp;<br><br>
 
     <label class="labels" for="prayer">صلاة:</label>
     <select class="txt-input" id="prayer" name="prayer" style="width: 50px;">
@@ -63,14 +80,6 @@
       <option value="نعم">نعم</option>
       <option value="لا">لا</option>
     </select>&ensp;
-
-
-    <b><label class="labels" for="serialNum">الرقم التسلسلي:</label></b>
-    &ensp;<input id="serialNum" class="txt-input" name="serialNum" value="{{serialNum}}" readonly type="number" style="width: 100px">&ensp;
-    <label class="labels" for="year">السنة:</label>
-    <input id="year" class="txt-input" name="year" value="{{year_num}}" readonly type="number" style="width: 100px">&ensp;
-
-    <br><br>
 
     <label class="labels" for="status">الحالة الإجتماعية:</label>
     <select class="txt-input" id="status" name="status" style="width: 120px;">
